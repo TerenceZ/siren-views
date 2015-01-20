@@ -1,32 +1,30 @@
-# koa-views
+siren-views
+==========
 
-[![NPM version][npm-image]][npm-url]
-[![Dependency Status][david-image]][david-url]
-[![License][license-image]][license-url]
+[![Build Status](https://secure.travis-ci.org/TerenceZ/siren-views.png)](http://travis-ci.org/TerenceZ/siren-views)
 
-Template rendering middleware for koa, supporting [many](https://github.com/tj/consolidate.js#supported-template-engines) template engines.
-
-## Installation
-
-```
-$ npm install koa-views
-```
+Template rendering middleware for koa, modified from [koa-views](https://github.com/queckezz/koa-views):
+* instead of `ctx.locals`, we use `ctx.state` to store template context.
+* `return yield *next` if `ctx.render` exists (no matter what the type is).
 
 ## Example
 
 ```js
-// Must be used before any router is used
+var koa = require('koa');
+var views = require('siren-views');
+
+var app = koa();
+
 app.use(views('views', {
+  default: 'jade',
   map: {
     html: underscore
   }
 }));
 
 app.use(function* (next) {
-  this.locals = {
-    session: this.session,
-    title: 'app'
-  };
+  this.state.session = this.session;
+  this.state.title = 'app';
 
   yield this.render('user', {
     user: 'John'
@@ -34,30 +32,19 @@ app.use(function* (next) {
 });
 ```
 
-For more examples take a look at the [tests](./test/index.js)
-
 ## API
 
-#### `views([path, opts])`
+Please refer to [koa-views](https://github.com/queckezz/koa-views).
 
-* `path (__dirname)`: __dirname + where your views are located
-* `opts`: these options go straight to [co-views](https://github.com/visionmedia/co-views).
+## Tests
 
-## Debug
+Tests use [mocha](https://github.com/visionmedia/mocha) and can be run
+with [npm](https://npmjs.org):
 
-Set the `DEBUG` environment variable to `koa-views` when starting your server.
-
-```bash
-$ DEBUG=koa-views
+```
+npm test
 ```
 
 ## License
 
 [MIT](./license)
-
-[npm-image]: https://img.shields.io/npm/v/koa-views.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/koa-views
-[david-image]: http://img.shields.io/david/queckezz/koa-views.svg?style=flat-square
-[david-url]: https://david-dm.org/queckezz/koa-views
-[license-image]: http://img.shields.io/npm/l/koa-views.svg?style=flat-square
-[license-url]: ./license
